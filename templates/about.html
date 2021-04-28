@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load static %}
+{% load user_filters %}
+{% block title %}Пароль изменен{% endblock %}
+{% block css %}<link rel="stylesheet" href="{% static './pages/index.css' %}">{% endblock %}
+{% block content %}
+        <div class="custom-center-block">
+            <h2>«Продуктовый помощник»</h2>
+            <p class="custom-text-block">Онлайн-сервис, где пользователи смогут публиковать рецепты,
+                подписываться на публикации других пользователей, добавлять понравившиеся рецепты в список «Избранное»,
+                а перед походом в магазин скачивать сводный список продуктов, необходимых для приготовления одного или нескольких выбранных блюд</p>
+        <div class="custom-button-block">
+            <a href="/"><button class="button button_style_blue">Перейти на главную</button></a>
+        </div>
+    </div>
+{% endblock %}

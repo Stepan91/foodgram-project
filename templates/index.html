@@ -1,9 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}Рецепты{% endblock %}
-    {% block content %}
-    {% include 'header.html' %}
+{% block content %}
+{% include 'header.html' %}
     <div class="card-list">
+        {% csrf_token %}
         {% for recipe in page %}
         {% include 'recipe.html' %}
         {% endfor %}
@@ -11,4 +12,25 @@
         {% if page.has_other_pages %}
             {% include 'paginator.html' with items=page paginator=paginator %}
         {% endif %}
-    {% endblock %}
+{% endblock %}
+{% block scripts %}
+{% if user.is_authenticated %}
+<script src="{% static './js/components/MainCards.js' %}"></script>
+<script src="{% static './js/components/Purchases.js' %}"></script>
+<script src="{% static './js/components/Favorites.js' %}"></script>
+<script src="{% static './js/config/config.js' %}"></script>
+<script src="{% static './js/components/CardList.js' %}"></script>
+<script src="{% static './js/components/Header.js' %}"></script>
+<script src="{% static './js/api/Api.js' %}"></script>
+<script src="{% static 'indexAuth.js' %}"></script>
+{% else %}
+<script src="{% static './js/components/MainCards.js' %}"></script>
+<script src="{% static './js/components/Purchases.js' %}"></script>
+<script src="{% static './js/config/config.js' %}"></script>
+<script src="{% static './js/components/CardList.js' %}"></script>
+<script src="{% static './js/components/Header.js' %}"></script>
+<script src="{% static './js/api/Api.js' %}"></script>
+<script src="{% static 'indexNotAuth.js' %}"></script>
+{% endif %}
+{% endblock %}
+
