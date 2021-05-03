@@ -2,16 +2,16 @@
     <div class="nav__container container">
         <ul class="nav__items list">
             {% if user.is_authenticated %}
-            {% url 'index' as current_url %}
-            <li class="nav__item {% if current_url == request.path %} nav__item_active {% endif %}"><a href="{% url 'index' %}" class="nav__link link">Рецепты</a></li>
-            {% url 'follow_index' as current_url %}
-            <li class="nav__item {% if current_url == request.path %} nav__item_active {% endif %}"><a href="{% url 'follow_index' %}" class="nav__link link">Мои подписки</a></li>
-            {% url 'new_recipe' as current_url %}
-            <li class="nav__item {% if current_url == request.path %} nav__item_active {% endif %}"><a href="{% url 'new_recipe' %}" class="nav__link link">Создать рецепт</a></li>
-            {% url 'favorites_view' user.username as current_url %}
-            <li class="nav__item {% if current_url == request.path %} nav__item_active {% endif %}"><a href="{% url 'favorites_view' user.username %}" class="nav__link link">Избранное</a></li>
-            {% url 'purchases_view' user.username as current_url %}
-            <li class="nav__item {% if current_url == request.path %} nav__item_active {% endif %}"><a href="{% url 'purchases_view' user.username %}" class="nav__link link">Список покупок</a> <span class="badge badge_style_blue nav__badge" id="counter">{{ user.purchases.count }}</span></li>
+            <li class="nav__item {% if request.resolver_match.url_name == 'index' %} nav__item_active {% endif %}"><a href="{% url 'index' %}" class="nav__link link">Рецепты</a></li>
+            <li class="nav__item {% if request.resolver_match.url_name == 'follow_index' %} nav__item_active {% endif %}"><a href="{% url 'follow_index' user.username %}" class="nav__link link">Мои подписки</a></li>
+            <li class="nav__item {% if request.resolver_match.url_name == 'new_recipe' %} nav__item_active {% endif %}"><a href="{% url 'new_recipe' %}" class="nav__link link">Создать рецепт</a></li>
+            <li class="nav__item {% if request.resolver_match.url_name == 'favorites_view' %} nav__item_active {% endif %}"><a href="{% url 'favorites_view' user.username %}" class="nav__link link">Избранное</a></li>
+            <li class="nav__item {% if request.resolver_match.url_name == 'purchases_view' %} nav__item_active {% endif %}"><a href="{% url 'purchases_view' user.username %}" class="nav__link link">Список покупок</a> 
+                {% if user.purchases.count > 0 %}
+                    <span class="badge badge_style_blue nav__badge" id="counter">{{ user.purchases.count }}</span></li>
+                {% else %}
+                    <span class="badge badge_style_blue nav__badge" id="counter"></span></li>
+                {% endif %}
             {% else %}
             <li class="nav__item nav__item_disabled"><a href="{% url 'index' %}" class="nav__link link">Рецепты</a></li>
             <li class="nav__item nav__item_disabled"><a href="#" class="nav__link link">Список покупок</a></li>

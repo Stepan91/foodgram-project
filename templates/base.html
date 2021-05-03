@@ -13,7 +13,7 @@
 </head>
 <body class="body">
 <header class="header">
-    {% include 'nav.html' %}
+    {% include 'nav.html' with user=user %}
 </header>
     <main class="main container">
         {% block content %}

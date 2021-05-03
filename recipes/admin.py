@@ -1,8 +1,5 @@
 from django.contrib import admin
-from .models import (
-    Recipe, Ingredient, IngredientRecipe,
-    Follow, Favorite, Purchase
-)
+from .models import Recipe, Ingredient, IngredientRecipe
 
 
 class IngredientRecipeInline(admin.TabularInline):
@@ -23,21 +20,6 @@ class IngredientAdmin(admin.ModelAdmin):
     list_filter = ('name',)
 
 
-class FollowAdmin(admin.ModelAdmin):
-    list_display = ('user', 'author')
-
-
-class FavoriteAdmin(admin.ModelAdmin):
-    list_display = ('user', 'recipe')
-
-
-class PurchaseAdmin(admin.ModelAdmin):
-    list_display = ('user', 'recipe')
-
-
 admin.site.register(IngredientRecipe)
 admin.site.register(Recipe, RecipeAdmin)
 admin.site.register(Ingredient, IngredientAdmin)
-admin.site.register(Follow, FollowAdmin)
-admin.site.register(Favorite, FavoriteAdmin)
-admin.site.register(Purchase, PurchaseAdmin)

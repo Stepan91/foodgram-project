@@ -2,11 +2,14 @@
 {% load static %}
 {% block title %}Рецепты{% endblock %}
 {% block content %}
-{% include 'header.html' %}
+<div class="main__header">
+    <h1 class="main__title">Рецепты</h1>
+    {% include 'tags.html' with tags=tags %}
+</div>
     <div class="card-list">
         {% csrf_token %}
         {% for recipe in page %}
-        {% include 'recipe.html' %}
+            {% include 'recipe.html' with tag=tag recipe=recipe %}
         {% endfor %}
     </div>
         {% if page.has_other_pages %}

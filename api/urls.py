@@ -15,5 +15,19 @@ urlpatterns = [
         name='del_purchase'
     ),
     path('ingredients/', views.IngredientsApiView.as_view(),
-         name='search_ingredients')
+         name='search_ingredients'),
+    path(
+        'subscriptions/',
+        views.profile_follow,
+        name='profile_follow'
+    ),
+    path(
+        'subscriptions/<str:username>/',
+        views.profile_unfollow,
+        name='profile_unfollow'),
+    path(
+        '<str:username>/purchases/<int:recipe_id>/delete',
+        views.delete_purchase,
+        name='delete_purchase'
+    )
 ]

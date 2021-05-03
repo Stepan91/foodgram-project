@@ -51,7 +51,7 @@ class Api {
       })
   }
   addSubscriptions(id) {
-    return fetch(`/subscriptions/`, {
+    return fetch(`/api/subscriptions/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -69,7 +69,7 @@ class Api {
       })
   }
   removeSubscriptions (id) {
-    return fetch(`/subscriptions/${id}/`, {
+    return fetch(`/api/subscriptions/${id}/`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -117,10 +117,9 @@ class Api {
         })
   }
     getIngredients  (text)  {
-        return fetch(`/api/ingredients?query=${text}`, {
+        return fetch(`/api/ingredients/?search=${text}`, {
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRFToken': document.getElementsByName('csrfmiddlewaretoken')[0].value
             }
         })
             .then( e => {
