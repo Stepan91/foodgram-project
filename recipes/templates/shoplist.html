@@ -16,13 +16,11 @@
                     <h3 class="recipe__title">{{ recipe.title }}</h3>
                     <p class="recipe__text"><span class="icon-time"></span> {{ recipe.cooking_time }} мин.</p>
                 </div>
-                {% if recipe|purchase_exists:user %}
-                    <a href="{% url 'delete_purchase' recipe.author.username recipe.id %}" class="shopping-list__button link">Удалить</a>
-                {% endif %}
+                <a href="{% url 'delete_purchase' recipe.author.username recipe.id %}" class="shopping-list__button link">Удалить</a>
             </li>
             {% endfor %}
         </ul>
-        {% if purchases %}
+        {% if recipe_list %}
             <a href="{% url 'purchaselist' %}"><button class="button button_style_blue">Скачать список</button></a>
         {% else %}
             <p class="main__title">Список покупок пуст</p>

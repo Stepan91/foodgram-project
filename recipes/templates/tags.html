@@ -1,32 +1,16 @@
-{% load recipe_filters %}
-<ul class="tags">
-    <li class="tags__item">
-        <li class="tags__item">
-            {% if "Завтрак" in tags %}
-                <a id="breakfast" class="tags__checkbox tags__checkbox_style_orange tags__checkbox_active" href="?{% set_tags request 'Завтрак' %}"></a>
-                <span class="tags__label">Завтрак</span>
-            {% else %}
-                <a id="breakfast" class="tags__checkbox tags__checkbox_style_orange" href="?{% set_tags request 'Завтрак' %}"></a>
-                <span class="tags__label">Завтрак</span>
+{% load recipe_filters %} 
+<ul class="tags"> 
+    <li class="tags__item"> 
+        {% for tag in tags_instance %}
+        <li class="tags__item"> 
+            {% if tag in tags %} 
+                <a id="{% if tag == "Завтрак" %}breakfast{% elif tag == "Обед" %}lunch{% elif tag == "Ужин" %}dinner{% endif %}" class="tags__checkbox tags__checkbox_style_{% if tag == "Завтрак" %}orange{% elif tag == "Обед" %}green{% elif tag == "Ужин" %}purple{% endif %} tags__checkbox_active" {% if tag == "Завтрак" %}href="?{% set_tags request 'Завтрак' %}{% elif tag == "Обед" %}href="?{% set_tags request 'Обед' %}{% elif tag == "Ужин" %}href="?{% set_tags request 'Ужин' %}{% endif %}"></a> 
+                <span class="tags__label">{% if tag == "Завтрак" %}Завтрак{% elif tag == "Обед" %}Обед{% elif tag == "Ужин" %}Ужин{% endif %}</span> 
+            {% else %} 
+                <a id="{% if tag == "Завтрак" %}breakfast{% elif tag == "Обед" %}lunch{% elif tag == "Ужин" %}dinner{% endif %}" class="tags__checkbox tags__checkbox_style_{% if tag == "Завтрак" %}orange{% elif tag == "Обед" %}green{% elif tag == "Ужин" %}purple{% endif %}" {% if tag == "Завтрак" %}href="?{% set_tags request 'Завтрак' %}{% elif tag == "Обед" %}href="?{% set_tags request 'Обед' %}{% elif tag == "Ужин" %}href="?{% set_tags request 'Ужин' %}{% endif %}"></a>
+                <span class="tags__label">{% if tag == "Завтрак" %}Завтрак{% elif tag == "Обед" %}Обед{% elif tag == "Ужин" %}Ужин{% endif %}</span> 
             {% endif %}
         </li>
-        <li class="tags__item">
-            {% if "Обед" in tags %}
-                <a id="lunch" class="tags__checkbox tags__checkbox_style_green tags__checkbox_active" href="?{% set_tags request 'Обед' %}"></a>
-                <span for="lunch" class="tags__label">Обед</span>
-            {% else %}
-                <a id="lunch" class="tags__checkbox tags__checkbox_style_green" href="?{% set_tags request 'Обед' %}"></a>
-                <span for="lunch" class="tags__label">Обед</span>
-            {% endif %}
-        </li>
-        <li class="tags__item">
-            {% if "Ужин" in tags %}
-                <a id="dinner" class="tags__checkbox tags__checkbox_style_purple tags__checkbox_active" href="?{% set_tags request 'Ужин' %}"></a>
-                <label for="dinner" class="tags__label">Ужин</label>
-            {% else %}
-                <a id="dinner" class="tags__checkbox tags__checkbox_style_purple" href="?{% set_tags request 'Ужин' %}"></a>
-                <label for="dinner" class="tags__label">Ужин</label>
-            {% endif %}
-        </li>
-    </li>
+        {% endfor %}
+    </li> 
 </ul>

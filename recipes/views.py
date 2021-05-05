@@ -3,7 +3,6 @@ from django.core.paginator import Paginator
 from .models import (
     Recipe, User, IngredientRecipe, Ingredient
 )
-from api.models import Follow, Favorite, Purchase
 from .forms import RecipeForm
 from .utils import save_recipe
 from django.contrib.auth.decorators import login_required
@@ -11,6 +10,7 @@ from reportlab.pdfgen import canvas
 from django.http import HttpResponse
 from django.db.models import Q
 from functools import reduce
+from django.db.models import Sum
 import operator
 
 
@@ -27,6 +27,7 @@ def get_tags(request):
 
 
 def index(request):
+    tags_instance = ['Завтрак', 'Обед', 'Ужин']
     tags, tags_filter = get_tags(request)
     if tags_filter:
         recipe_list = Recipe.objects.filter(tags_filter).all()
@@ -38,7 +39,8 @@ def index(request):
     return render(
         request,
         'index.html',
-        {'page': page, 'paginator': paginator, 'tags': tags}
+        {'page': page, 'paginator': paginator,
+         'tags': tags, 'tags_instance': tags_instance}
     )
 
 
@@ -48,7 +50,7 @@ def new_recipe(request):
     if form.is_valid():
         save_recipe(request, form)
         return redirect('index')
-    return render(request, 'new.html', {'form': form})
+    return render(request, 'new_edit_recipe.html', {'form': form})
 
 
 @login_required
@@ -64,7 +66,7 @@ def recipe_edit(request, username, recipe_id):
         return redirect('index')
     return render(
         request,
-        'recipe_edit.html',
+        'new_edit_recipe.html',
         {'form': form, 'recipe': recipe}
     )
 
@@ -89,18 +91,12 @@ def profile(request, username):
     paginator = Paginator(recipe_list, 6)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
-    following = None
-    if request.user.is_authenticated:
-        following = Follow.objects.filter(
-            user=request.user,
-            author=author).exists()
     return render(
         request,
         'profile.html', {
             'page': page,
             'paginator': paginator,
             'author': author,
-            'following': following,
             'tags': tags,
             }
         )
@@ -108,9 +104,8 @@ def profile(request, username):
 
 @login_required
 def recipe_delete(request, username, recipe_id):
-    author = get_object_or_404(User, username=username)
-    recipe = get_object_or_404(Recipe, author=author, id=recipe_id)
-    if recipe.exists() and author == request.user:
+    recipe = get_object_or_404(Recipe, author__username=username, id=recipe_id)
+    if recipe.author == request.user:
         recipe.delete()
     return redirect('profile', username=username)
 
@@ -149,42 +144,31 @@ def favorites_view(request, username):
 
 @login_required
 def purchases_view(request, username):
-    purchases = Purchase.objects.filter(user__username=username)
-    recipe_list = Recipe.objects.filter(purchases__in=purchases)
+    recipe_list = Recipe.objects.filter(purchases__user__username=username)
     paginator = Paginator(recipe_list, 6)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     return render(
         request,
         'shoplist.html',
-        {'page': page, 'paginator': paginator, 'purchases': purchases}
+        {'page': page, 'paginator': paginator, 'recipe_list': recipe_list}
     )
 
 
 def purchase_list(request):
-    recipes = Recipe.objects.filter(purchases__user=request.user)
-    ingredients = Ingredient.objects.filter(
-        ingredientrecipe__recipe__in=recipes
+    ingredients = request.user.purchases.values(
+        'recipe__title',
+        'recipe__ingredientrecipe__value',
+        'recipe__ingredient__unit'
+    ).annotate(
+        amount=Sum('recipe__ingredientrecipe__value')
     )
-    ingredient_recipes = IngredientRecipe.objects.filter(
-        ingredient__in=ingredients,
-        recipe__in=recipes
-    )
-    purchaselist = {}
-    for item in ingredient_recipes:
-        if purchaselist.get(item.ingredient.name) is None:
-            purchaselist[item.ingredient.name] = [
-                item.ingredient.unit,
-                item.value
-            ]
-        else:
-            purchaselist[item.ingredient.name][1] += item.value
     response = HttpResponse(content_type='application/pdf')
     content = 'attachment; filename="purchase_list.pdf"'
     response['Content-Disposition'] = content
     p = canvas.Canvas(response)
-    for key, value in purchaselist.items():
-        p.drawString(100, 100, '{} {} {}'.format(key, value[0], value[1]))
+    for value in ingredients:
+        p.drawString(100, 100, '{}'.format(value))
     p.showPage()
     p.save()
     return response

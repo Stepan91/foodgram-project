@@ -1,22 +1,12 @@
+{% extends "base.html" %}
 {% load static %}
 {% load user_filters %}
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>{% block title %}<!-- Title -->{% endblock %}</title>
-    <link rel="stylesheet" href="{% static './pages/form.css' %}">
-</head>
-<body class="body">
-<header class="header">
-    {% include 'nav.html' with user=user %}
-</header>
-    <main class="main container">
+{% load recipe_filters %}
+{% block title %}{% if request.resolver_match.url_name == 'new_recipe' %} Создание рецепта {% else %} Редакцтирование рецепта {% endif %}{% endblock %}
+{% block css %}<link rel="stylesheet" href="{% static './pages/form.css' %}">{% endblock %}
+    {% block content %}
         <div class="main__header">
-            <h1 class="main__title">{% block name %} <!-- Main title --> {% endblock %}</h1>
+            <h1 class="main__title">{% if request.resolver_match.url_name == 'new_recipe' %} Создание рецепта {% else %} Редакцтирование рецепта {% endif %}</h1>
         </div>
         <div class="form-container">
             <form class="form" method="post" enctype="multipart/form-data">
@@ -63,9 +53,19 @@
                             <label for="cantidad" class="form__label" id="cantidadVal">шт.</label>
                         </div>
                         <div class="form__field-group-ingredientes-container">
-                            {% block ingredients %}
-                                <!-- Ingredients -->
-                            {% endblock %}
+                            {% if request.resolver_match.url_name == 'edit_recipe' %}
+                                {% for item in recipe.ingredientrecipe.all %}
+                                <div class="form__field-item-ingredient" id="ing_{{ forloop.counter }}">
+                                    <span> 
+                                        {{ item.ingredient.name }} {{ item.value }} {{ item.ingredient.unit }}
+                                    </span>
+                                    <span class="form__field-item-delete"></span>
+                                    <input id="nameIngredient_{{ forloop.counter }}" name="nameIngredient_{{ forloop.counter }}" type="hidden" value="{{ item.ingredient.name }}">
+                                    <input id="valueIngredient_{{ forloop.counter }}" name="valueIngredient_{{ forloop.counter }}" type="hidden" value="{{ item.value }}">
+                                    <input id="unitsIngredient_{{ forloop.counter }}" name="unitsIngredient_{{ forloop.counter }}" type="hidden" value="{{ item.ingredient.value }}">
+                                </div>
+                                {% endfor %}
+                            {% endif %}
                         </div>
                         <span class="form__ingredient-link" id="addIng">Добавить ингредиент</span>
                         <span class="form__error"></span>
@@ -86,20 +86,40 @@
                         <span class="form__error"></span>
                     </div>
                 </div>
-                {% block image %}
-                    <!-- Image -->
-                {% endblock %}
-                {% block button %}
-                    <!-- Button -->
-                {% endblock %}
+                {% if request.resolver_match.url_name == 'new_recipe' %}
+                    <div class="form__group">
+                        <label for="{{ form.image.id_for_label }}" class="form__label">Загрузить изображение</label>
+                        <div class="form__field-group">
+                            {{ form.image }}
+                            <span class="form__error"></span>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="form__group">
+                        <span class="form__label">Загрузить фото</span>
+                        <div class="form__field-group">
+                            <input type="file" name="{{ form.image.name }}" id="{{ form.image.id_for_label }}">{{ form.image.value|default_if_none:'' }}
+                            <span class="form__error"></span>
+                        </div>
+                    </div>
+                {% endif %}
+                {% if request.resolver_match.url_name == 'new_recipe' %}
+                    <div class="form__footer">
+                        <button class="button button_style_blue">Создать рецепт</button>
+                    </div>
+                {% else %}
+                    <div class="form__footer">
+                        <button class="button button_style_blue">Сохранить</button> <a style="margin-left: 2.5em" href="{% url 'delete_recipe' recipe.author recipe.id %}" class="form__ingredient-link">Удалить</a>
+                    </div>
+                {% endif %}
             </form>
         </div>
-    </main>
-    {% include 'footer.html' %}
+    {% endblock %}
+{% include 'footer.html' %}
+{% block scripts %}
     <script src="{% static './js/config/config.js' %}"></script>
     <script src="{% static './js/components/Header.js' %}"></script>
     <script src="{% static './js/utils/debouncing.js' %}"></script>
     <script src="{% static './js/api/Api.js' %}"></script>
     <script src="{% static 'formRecipe.js' %}"></script>
-</body>
-</html>
+{% endblock %}

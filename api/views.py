@@ -67,10 +67,7 @@ def delete_purchase(request, username, recipe_id):
     purchase = Purchase.objects.filter(user=request.user, recipe=recipe)
     if purchase.exists():
         purchase.delete()
-    return redirect(
-        'purchases_view',
-        username=username
-    )
+    return redirect('purchases_view', username=request.user)
 
 
 @login_required
