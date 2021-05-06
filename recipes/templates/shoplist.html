@@ -20,7 +20,7 @@
             </li>
             {% endfor %}
         </ul>
-        {% if recipe_list %}
+        {% if page %}
             <a href="{% url 'purchaselist' %}"><button class="button button_style_blue">Скачать список</button></a>
         {% else %}
             <p class="main__title">Список покупок пуст</p>

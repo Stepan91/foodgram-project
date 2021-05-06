@@ -1,24 +1,23 @@
 {% load recipe_filters %}
-{% if user.is_authenticated %}
-    {% if request.user != author %}
-        {% if author|is_follow:user %}
-            {% csrf_token %}
-                {% if request.resolver_match.url_name == 'recipe' %}
-                    <li class="single-card__item"><button class="button button_style_light-blue" name="subscribe">Отписаться от автора</button></li>
-                {% else %}
-                    <div class="author-subscribe" data-author="{{ author.username }}">
-                        <p style="padding: 0 0 2em 0;"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" >Отписаться от автора</button></p>
-                    </div>
-                {% endif %}
-        {% else %}
-            {% csrf_token %}
-                {% if request.resolver_match.url_name == 'recipe' %}
-                    <li class="single-card__item"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Подписаться на автора</button></li>
-                {% else %}
-                    <div class="author-subscribe" data-author="{{ author.username }}">
-                        <p style="padding: 0 0 2em 0;"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Подписаться на автора</button></p>
-                    </div>
-                {% endif %}
+{% if user.is_authenticated and request.user != author %}
+    <!--я бы мог тут нагромадить сложночитаемую конструкцию, как в purchase_buttons,
+    но в данном случае, на мой взгляд, здесь все более чем наглядно-->
+    {% csrf_token %}
+    {% if author|follow_exists:user %} 
+        {% if request.resolver_match.url_name == 'recipe' %} 
+            <li class="single-card__item"><button class="button button_style_light-blue" name="subscribe">Отписаться от автора</button></li> 
+        {% else %} 
+            <div class="author-subscribe" data-author="{{ author.username }}"> 
+                <p style="padding: 0 0 2em 0;"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" >Отписаться от автора</button></p> 
+            </div>
         {% endif %}
+    {% else %}
+        {% if request.resolver_match.url_name == 'recipe' %} 
+            <li class="single-card__item"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Подписаться на автора</button></li> 
+        {% else %} 
+            <div class="author-subscribe" data-author="{{ author.username }}"> 
+                <p style="padding: 0 0 2em 0;"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Подписаться на автора</button></p> 
+            </div> 
+        {% endif %} 
     {% endif %}
 {% endif %}

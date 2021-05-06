@@ -1,6 +1,5 @@
 from django import template
 from api.models import Favorite, Purchase, Follow
-from recipes.models import IngredientRecipe
 
 register = template.Library()
 
@@ -11,11 +10,6 @@ def favorite_exists(recipe, user):
 
 
 @register.filter
-def is_follow(author, user):
-    return Follow.objects.filter(user=user, author=author).exists()
-
-
-@register.filter
 def purchase_exists(recipe, user):
     return Purchase.objects.filter(recipe=recipe, user=user).exists()
 
@@ -23,6 +17,11 @@ def purchase_exists(recipe, user):
 @register.filter
 def follow_exists(author, user):
     return Follow.objects.filter(author=author, user=user).exists()
+
+
+@register.filter
+def get_item(dictionary, key):
+    return dictionary.get(key)
 
 
 @register.simple_tag
@@ -44,7 +43,7 @@ def counter(recipes, author):
     if cnt <= 3:
         return
     cnt -= 3
-    if cnt in range(2, 5) or cnt % 10 in range(2, 5):
+    if cnt % 10 in range(2, 5):
         return f'{cnt} рецепта'
     elif cnt in range(5, 21) or cnt % 10 in range(5, 10) or cnt % 10 == 0:
         return f'{cnt} рецептов'

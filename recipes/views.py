@@ -1,8 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator
-from .models import (
-    Recipe, User, IngredientRecipe, Ingredient
-)
+from .models import Recipe, User, TAG_CHOICES
 from .forms import RecipeForm
 from .utils import save_recipe
 from django.contrib.auth.decorators import login_required
@@ -27,7 +25,7 @@ def get_tags(request):
 
 
 def index(request):
-    tags_instance = ['Завтрак', 'Обед', 'Ужин']
+    tags_instance = [i[0] for i in TAG_CHOICES]
     tags, tags_filter = get_tags(request)
     if tags_filter:
         recipe_list = Recipe.objects.filter(tags_filter).all()
@@ -36,12 +34,28 @@ def index(request):
     paginator = Paginator(recipe_list, 6)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
-    return render(
-        request,
-        'index.html',
-        {'page': page, 'paginator': paginator,
-         'tags': tags, 'tags_instance': tags_instance}
-    )
+    context = {
+            'tag_id': {
+                'Завтрак': 'breakfast',
+                'Обед': 'lunch',
+                'Ужин': 'dinner'
+            },
+            'tag_color': {
+                'Завтрак': 'orange',
+                'Обед': 'green',
+                'Ужин': 'purple'
+            },
+            'tag_name': {
+                'Завтрак': 'Завтрак',
+                'Обед': 'Обед',
+                'Ужин': 'Ужин'
+            },
+            'page': page,
+            'paginator': paginator,
+            'tags': tags,
+            'tags_instance': tags_instance
+    }
+    return render(request, 'index.html', context)
 
 
 @login_required
@@ -151,7 +165,7 @@ def purchases_view(request, username):
     return render(
         request,
         'shoplist.html',
-        {'page': page, 'paginator': paginator, 'recipe_list': recipe_list}
+        {'page': page, 'paginator': paginator}
     )
 
 
