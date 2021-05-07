@@ -20,8 +20,15 @@ def follow_exists(author, user):
 
 
 @register.filter
-def get_item(dictionary, key):
-    return dictionary.get(key)
+def get_key(dictionary, key):
+    return dictionary[key]
+
+
+@register.filter
+def find_item(lst, tag):
+    for item in lst:
+        if tag in item.values():
+            return item
 
 
 @register.simple_tag
@@ -38,7 +45,7 @@ def set_tags(request, value):
 
 
 @register.filter
-def counter(recipes, author):
+def counter(author):
     cnt = author.recipes.count()
     if cnt <= 3:
         return

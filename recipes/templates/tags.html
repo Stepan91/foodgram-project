@@ -4,21 +4,23 @@
         {% for tag in tags_instance %} 
         <li class="tags__item">  
             {% if tag in tags %}
-                <a id="{{ tag_id|get_item:tag }}" class="tags__checkbox tags__checkbox_style_{{ tag_color|get_item:tag }} tags__checkbox_active" 
-                {% if tag == "Завтрак" %}href="?{% set_tags request 'Завтрак' %}
-                {% elif tag == "Обед" %}href="?{% set_tags request 'Обед' %}
-                {% elif tag == "Ужин" %}href="?{% set_tags request 'Ужин' %}
-                {% endif %}"></a>
-                <span class="tags__label">{{ tag_name|get_item:tag }}</span>
-            {% else %}  
-                <a id="{{ tag_id|get_item:tag }}" class="tags__checkbox tags__checkbox_style_{{ tag_color|get_item:tag }}" 
-                {% if tag == "Завтрак" %}href="?{% set_tags request 'Завтрак' %}
-                {% elif tag == "Обед" %}href="?{% set_tags request 'Обед' %}
-                {% elif tag == "Ужин" %}href="?{% set_tags request 'Ужин' %}
-                {% endif %}"></a>
-                <span class="tags__label">{{ tag_name|get_item:tag }}</span> 
+                {% with item=tag_list|find_item:tag %}
+                    <a id="{{ item|get_key:'id' }}" class="tags__checkbox tags__checkbox_style_{{ item|get_key:'color' }} tags__checkbox_active" 
+                    {% with path=item|get_key:'name' %}
+                        href="?{% set_tags request path %}"></a>
+                    {% endwith %}
+                <span class="tags__label">{{ item|get_key:'name' }}</span>
+                {% endwith %}
+            {% else %}
+                {% with item=tag_list|find_item:tag %}  
+                    <a id="{{ item|get_key:'id' }}" class="tags__checkbox tags__checkbox_style_{{ item|get_key:'color' }}" 
+                    {% with path=item|get_key:'name' %}
+                        href="?{% set_tags request path %}"></a>
+                    {% endwith %}
+                    <span class="tags__label">{{ item|get_key:'name' }}</span>
+                {% endwith %}
             {% endif %} 
         </li> 
         {% endfor %} 
     </li>  
-</ul> 
+</ul>

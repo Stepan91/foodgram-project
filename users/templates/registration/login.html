@@ -9,6 +9,12 @@
     </div>
     <div class="form-container">
         <form class="form" form method="post" action="{% url 'login' %}">
+            {% if next %}          
+                <div class="form__input-info"> 
+                    Вы обратились к странице, доступ к которой возможен только для залогиненных пользователей.<br> 
+                    Пожалуйста, авторизуйтесь. 
+                </div> 
+            {% endif %}
             {% include 'general_form.html' with form=form %}
             <div class="col-md-6 offset-md-4">              
                 <button type="submit" class="button button_style_blue">

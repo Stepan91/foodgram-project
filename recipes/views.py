@@ -24,9 +24,40 @@ def get_tags(request):
     return tags, tags_filter
 
 
+def generate_dicts(tags: list):
+    tag_list = []
+    for tag in tags:
+        if tag == 'Завтрак':
+            tag_list.append(
+                {
+                    'id': 'breakfast',
+                    'color': 'orange',
+                    'name': tag
+                }
+            )
+        elif tag == 'Обед':
+            tag_list.append(
+                {
+                    'id': 'lunch',
+                    'color': 'green',
+                    'name': tag
+                }
+            )
+        elif tag == 'Ужин':
+            tag_list.append(
+                {
+                    'id': 'dinner',
+                    'color': 'purple',
+                    'name': tag
+                }
+            )
+    return tag_list
+
+
 def index(request):
     tags_instance = [i[0] for i in TAG_CHOICES]
     tags, tags_filter = get_tags(request)
+    tag_list = generate_dicts(tags_instance)
     if tags_filter:
         recipe_list = Recipe.objects.filter(tags_filter).all()
     else:
@@ -35,21 +66,7 @@ def index(request):
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     context = {
-            'tag_id': {
-                'Завтрак': 'breakfast',
-                'Обед': 'lunch',
-                'Ужин': 'dinner'
-            },
-            'tag_color': {
-                'Завтрак': 'orange',
-                'Обед': 'green',
-                'Ужин': 'purple'
-            },
-            'tag_name': {
-                'Завтрак': 'Завтрак',
-                'Обед': 'Обед',
-                'Ужин': 'Ужин'
-            },
+            'tag_list': tag_list,
             'page': page,
             'paginator': paginator,
             'tags': tags,
