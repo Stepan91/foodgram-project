@@ -3,23 +3,13 @@
     <li class="tags__item">  
         {% for tag in tags_instance %} 
         <li class="tags__item">  
-            {% if tag in tags %}
                 {% with item=tag_list|find_item:tag %}
-                    <a id="{{ item|get_key:'id' }}" class="tags__checkbox tags__checkbox_style_{{ item|get_key:'color' }} tags__checkbox_active" 
+                    <a id="{{ item|get_key:'id' }}" class="tags__checkbox tags__checkbox_style_{{ item|get_key:'color' }}{% if tag in tags %} tags__checkbox_active{% endif %}" 
                     {% with path=item|get_key:'name' %}
                         href="?{% set_tags request path %}"></a>
                     {% endwith %}
                 <span class="tags__label">{{ item|get_key:'name' }}</span>
-                {% endwith %}
-            {% else %}
-                {% with item=tag_list|find_item:tag %}  
-                    <a id="{{ item|get_key:'id' }}" class="tags__checkbox tags__checkbox_style_{{ item|get_key:'color' }}" 
-                    {% with path=item|get_key:'name' %}
-                        href="?{% set_tags request path %}"></a>
-                    {% endwith %}
-                    <span class="tags__label">{{ item|get_key:'name' }}</span>
-                {% endwith %}
-            {% endif %} 
+                {% endwith %} 
         </li> 
         {% endfor %} 
     </li>  

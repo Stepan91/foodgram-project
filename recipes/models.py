@@ -2,14 +2,11 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from multiselectfield import MultiSelectField
 from django.core.validators import MinValueValidator
+from .tags_instanse import tags_dict
 
 User = get_user_model()
 
-TAG_CHOICES = [
-        ('Завтрак', 'Завтрак'),
-        ('Обед', 'Обед'),
-        ('Ужин', 'Ужин'),
-    ]
+TAG_CHOICES = [(name, name) for name in tags_dict]
 
 
 class Ingredient(models.Model):
@@ -18,7 +15,7 @@ class Ingredient(models.Model):
 
     def __str__(self):
         return self.name
- 
+
     class Meta:
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'

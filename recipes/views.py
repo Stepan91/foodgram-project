@@ -9,6 +9,7 @@ from django.http import HttpResponse
 from django.db.models import Q
 from functools import reduce
 from django.db.models import Sum
+from .tags_instanse import tags_dict
 import operator
 
 
@@ -24,40 +25,17 @@ def get_tags(request):
     return tags, tags_filter
 
 
-def generate_dicts(tags: list):
+def generate_tags_list(tags: list):
     tag_list = []
     for tag in tags:
-        if tag == 'Завтрак':
-            tag_list.append(
-                {
-                    'id': 'breakfast',
-                    'color': 'orange',
-                    'name': tag
-                }
-            )
-        elif tag == 'Обед':
-            tag_list.append(
-                {
-                    'id': 'lunch',
-                    'color': 'green',
-                    'name': tag
-                }
-            )
-        elif tag == 'Ужин':
-            tag_list.append(
-                {
-                    'id': 'dinner',
-                    'color': 'purple',
-                    'name': tag
-                }
-            )
+        tag_list.append(tags_dict[tag])
     return tag_list
 
 
 def index(request):
     tags_instance = [i[0] for i in TAG_CHOICES]
     tags, tags_filter = get_tags(request)
-    tag_list = generate_dicts(tags_instance)
+    tag_list = generate_tags_list(tags_instance)
     if tags_filter:
         recipe_list = Recipe.objects.filter(tags_filter).all()
     else:

@@ -1,20 +1,10 @@
 {% load user_filters %}
 {% csrf_token %}
-    {% for error in form.errors %}
+    {% for error in form.errors.as_data %}
         <div class="alert alert-danger" role="alert">
-            {% if request.resolver_match.url_name == 'signup' or request.resolver_match.url_name == 'login' %}
-                Имя пользователя и пароль не совпадают. Введите правильные данные.
-            {% endif %}
-            {% if request.resolver_match.url_name == 'password_change' %}
-                Проверьте правильность старого пароля и идентичность ввода нового в соответствующих полях.
-            {% endif %}
+            Проверьте поле: {{ error }}
         </div>
     {% endfor %}
-    {% if request.resolver_match.url_name == 'password_reset' %}
-            <p class="form__info-text">
-                Чтобы сбросить старый пароль — введите адрес электронной почты, под которым вы регистрировались.
-            </p>
-    {% endif %}
     {% for field in form %}
         <div class="form__group" aria-required={% if field.field.required %}"true"{% else %}"false"{% endif %}>
             <label for="{{ field.id_for_label }}" class="form__label">{{ field.label }}</label>
