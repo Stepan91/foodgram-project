@@ -1,4 +1,4 @@
-tags_dict = {
+TAGS_DICT = {
     'Завтрак': {
         'id': 'breakfast',
         'color': 'orange',

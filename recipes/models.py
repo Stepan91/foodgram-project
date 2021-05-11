@@ -2,11 +2,11 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from multiselectfield import MultiSelectField
 from django.core.validators import MinValueValidator
-from .tags_instanse import tags_dict
+from .tags_instanse import TAGS_DICT
 
 User = get_user_model()
 
-TAG_CHOICES = [(name, name) for name in tags_dict]
+TAG_CHOICES = [(name, name) for name in TAGS_DICT]
 
 
 class Ingredient(models.Model):

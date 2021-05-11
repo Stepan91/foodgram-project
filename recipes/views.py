@@ -9,7 +9,7 @@ from django.http import HttpResponse
 from django.db.models import Q
 from functools import reduce
 from django.db.models import Sum
-from .tags_instanse import tags_dict
+from .tags_instanse import TAGS_DICT
 import operator
 
 
@@ -26,9 +26,7 @@ def get_tags(request):
 
 
 def generate_tags_list(tags: list):
-    tag_list = []
-    for tag in tags:
-        tag_list.append(tags_dict[tag])
+    tag_list = [TAGS_DICT[tag] for tag in tags]
     return tag_list
 
 
@@ -122,7 +120,7 @@ def recipe_delete(request, username, recipe_id):
 @login_required
 def follow_index(request, username):
     authors = User.objects.filter(following__user__username=username)
-    paginator = Paginator(authors, 5)
+    paginator = Paginator(authors, 3)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     return render(request, 'follow.html', {
