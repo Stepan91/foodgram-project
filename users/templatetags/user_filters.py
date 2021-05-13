@@ -1,5 +1,4 @@
 from django import template
-from recipes.models import Recipe
 register = template.Library()
 
 
