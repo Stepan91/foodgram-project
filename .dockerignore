@@ -1,0 +1,11 @@
+**
+
+!api/
+!foodgram/
+!recipes/
+!manage.py
+!requirements.txt
+
+__pycache__/
+*.py[cod]
+*$py.class
