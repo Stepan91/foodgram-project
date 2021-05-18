@@ -4,7 +4,6 @@ from .models import Recipe, User, TAG_CHOICES
 from .forms import RecipeForm
 from .utils import save_recipe
 from django.contrib.auth.decorators import login_required
-from reportlab.pdfgen import canvas
 from django.http import HttpResponse
 from django.db.models import Q
 from functools import reduce
@@ -99,7 +98,7 @@ def recipe_edit(request, username, recipe_id):
         'new_edit_recipe.html',
         {
             'form': form,
-            'recipe': recipe, 
+            'recipe': recipe,
             'tag_list': tag_list,
             'tags_instance': tags_instance,
             'is_breakfast': is_breakfast,
