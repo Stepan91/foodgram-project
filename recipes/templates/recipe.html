@@ -3,7 +3,7 @@
 <div class="card" data-id="{{ recipe.id }}">
     {% load thumbnail %}
     {% thumbnail recipe.image "480x250" crop="center" upscale=True as im %}
-        <a href="{{ recipe.image.url }}">
+        <a href="{% url 'recipe' recipe.author.username recipe.id %}">
             <img src="{{ im.url }}" class="image-detail">
         </a>
     {% endthumbnail %}
@@ -22,7 +22,7 @@
         </ul>
         <div class="card__items card__items_column">
             <p class="card__text"><span class="icon-time"></span> {{ recipe.cooking_time }} мин.</p>
-            <p class="card__text"><span class="icon-user"></span> <a href="{% url 'profile' recipe.author.username %}" style="color: black">{{ recipe.author }}</a></p>
+            <p class="card__text"><span class="icon-user"></span> <a href="{% url 'profile' recipe.author.username %}" style="text-decoration:none; color: black">{{ recipe.author.first_name }} {{ recipe.author.last_name }}</a></p>
         </div>
     </div>
     <div class="card__footer">

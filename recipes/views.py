@@ -13,6 +13,18 @@ from .tags_instanse import TAGS_DICT
 import operator
 
 
+def get_ingredients(request):
+    ingredients = {}
+    for key, value in request.POST.items():
+        if not key.startswith('nameIngredient_'):
+            continue
+        arg = key.split('_')[1]
+        title = value
+        amount = request.POST['valueIngredient_' + arg]
+        ingredients[title] = amount
+    return ingredients
+
+
 def get_tags(request):
     tags = []
     tags_filter = None
@@ -54,27 +66,46 @@ def index(request):
 @login_required
 def new_recipe(request):
     form = RecipeForm(request.POST or None, files=request.FILES or None)
-    if form.is_valid():
-        save_recipe(request, form)
-        return redirect('index')
+    if request.method == 'POST':
+        ingredients = get_ingredients(request)
+
+        if not ingredients:
+            form.add_error(None, 'Добавьте ингредиенты')
+
+        elif form.is_valid():
+            save_recipe(request, form)
+            return redirect('index')
     return render(request, 'new_edit_recipe.html', {'form': form})
 
 
 @login_required
 def recipe_edit(request, username, recipe_id):
+    tags_instance = [i[0] for i in TAG_CHOICES]
+    tag_list = generate_tags_list(tags_instance)
     recipe = get_object_or_404(Recipe, author__username=username, id=recipe_id)
     form = RecipeForm(
         data=request.POST or None,
         files=request.FILES or None,
         instance=recipe
     )
+    is_breakfast = 'Завтрак' in recipe.tag
+    is_lunch = 'Обед' in recipe.tag
+    is_dinner = 'Ужин' in recipe.tag
     if form.is_valid():
         save_recipe(request, form)
         return redirect('index')
     return render(
         request,
         'new_edit_recipe.html',
-        {'form': form, 'recipe': recipe}
+        {
+            'form': form,
+            'recipe': recipe, 
+            'tag_list': tag_list,
+            'tags_instance': tags_instance,
+            'is_breakfast': is_breakfast,
+            'is_lunch': is_lunch,
+            'is_dinner': is_dinner
+        }
     )
 
 
@@ -90,7 +121,9 @@ def recipe_view(request, username, recipe_id):
 
 def profile(request, username):
     author = get_object_or_404(User, username=username)
+    tags_instance = [i[0] for i in TAG_CHOICES]
     tags, tags_filter = get_tags(request)
+    tag_list = generate_tags_list(tags_instance)
     if tags_filter:
         recipe_list = Recipe.objects.filter(tags_filter).filter(author=author)
     else:
@@ -105,6 +138,8 @@ def profile(request, username):
             'paginator': paginator,
             'author': author,
             'tags': tags,
+            'tag_list': tag_list,
+            'tags_instance': tags_instance
             }
         )
 
@@ -132,7 +167,9 @@ def follow_index(request, username):
 
 @login_required
 def favorites_view(request, username):
+    tags_instance = [i[0] for i in TAG_CHOICES]
     tags, tags_filter = get_tags(request)
+    tag_list = generate_tags_list(tags_instance)
     if tags_filter:
         recipe_list = Recipe.objects.filter(tags_filter).filter(
             favorites__user__username=username
@@ -145,7 +182,13 @@ def favorites_view(request, username):
     return render(
         request,
         'favorites.html',
-        {'page': page, 'paginator': paginator, 'tags': tags}
+        {
+            'page': page,
+            'paginator': paginator,
+            'tags': tags,
+            'tag_list': tag_list,
+            'tags_instance': tags_instance
+        }
     )
 
 
@@ -164,20 +207,20 @@ def purchases_view(request, username):
 
 def purchase_list(request):
     ingredients = request.user.purchases.values(
-        'recipe__title',
-        'recipe__ingredientrecipe__value',
+        'recipe__ingredient__name',
         'recipe__ingredient__unit'
     ).annotate(
         amount=Sum('recipe__ingredientrecipe__value')
     )
-    response = HttpResponse(content_type='application/pdf')
-    content = 'attachment; filename="purchase_list.pdf"'
+    file_data = ""
+    for item in ingredients:
+        line = ' '.join(str(value) for value in item.values())
+        file_data += line + '\n'
+    response = HttpResponse(
+        file_data, content_type='application/text charset=utf-8'
+    )
+    content = 'attachment; filename="purchase_list.txt"'
     response['Content-Disposition'] = content
-    p = canvas.Canvas(response)
-    for value in ingredients:
-        p.drawString(100, 100, '{}'.format(value))
-    p.showPage()
-    p.save()
     return response
 
 

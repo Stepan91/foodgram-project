@@ -10,7 +10,11 @@ TAG_CHOICES = [(name, name) for name in TAGS_DICT]
 
 
 class Ingredient(models.Model):
-    name = models.CharField(max_length=200, verbose_name='Ингредиент')
+    name = models.CharField(
+        max_length=200,
+        verbose_name='Ингредиент',
+        unique=True
+    )
     unit = models.CharField(max_length=50, verbose_name='Ед. изм.')
 
     def __str__(self):
