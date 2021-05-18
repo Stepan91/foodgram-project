@@ -13,10 +13,7 @@ class RecipeForm(forms.ModelForm):
             'description',
             'image')
         widgets = {
-            'tag': forms.CheckboxSelectMultiple(attrs={
-                'class': 'tags__checkbox tags__checkbox_style_green'
-                }
-            ),
+            'tag': forms.CheckboxSelectMultiple(),
             'description': forms.Textarea(),
         }
         labels = {
