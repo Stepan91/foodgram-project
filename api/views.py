@@ -1,13 +1,13 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect
-from rest_framework import status, generics, filters
+from rest_framework import status
 from rest_framework.response import Response
+from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from recipes.models import Recipe, Ingredient, User
 from .models import Favorite, Purchase, Follow
 from .serializers import (
-    FavoriteSerializer, PurchaseSerializer,
-    IngredientSerializer, FollowSerializer
+    FavoriteSerializer, PurchaseSerializer, FollowSerializer
 )
 
 SUCCESS_TRUE = {'success': True}
@@ -95,8 +95,8 @@ def profile_unfollow(request, username):
     return Response(SUCCESS_FALSE, status=status.HTTP_404_NOT_FOUND)
 
 
-class IngredientsApiView(generics.ListAPIView):
-    queryset = Ingredient.objects.all()
-    serializer_class = IngredientSerializer
-    search_fields = ['name']
-    filter_backends = [filters.SearchFilter]
+def ingredients_view(request):
+    text = request.GET.get('search')
+    ingredients = list(Ingredient.objects.filter(
+        name__istartswith=text).values('name', 'unit'))
+    return JsonResponse(ingredients, safe=False)

@@ -13,7 +13,8 @@ class Ingredient(models.Model):
     name = models.CharField(
         max_length=200,
         verbose_name='Ингредиент',
-        unique=True
+        unique=True,
+        error_messages={'unique': 'Ингредиент с таким именем уже существует.'}
     )
     unit = models.CharField(max_length=50, verbose_name='Ед. изм.')
 
