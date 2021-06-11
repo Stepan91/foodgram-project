@@ -10,7 +10,7 @@
 - Python
 - Django
 - Django Rest Framework
-- PostgresSQL
+- PostgreSQL
 - Docker
 - nginx
 - Gunicorn
